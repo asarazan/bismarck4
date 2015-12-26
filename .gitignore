@@ -1,0 +1,7 @@
+kobaltBuild
+javaBuild
+.kobalt
+.idea
+out
+gen
+.DS_Store
