@@ -24,13 +24,11 @@ val p = kotlinProject {
     }
 
     dependencies {
-        //        compile("com.beust:jcommander:1.48")
         compile("io.reactivex:rxjava:1.1.0")
-//        compile("org.jetbrains.kotlin:kotlin-stdlib:1.0.0-beta-4583")
+        provided("com.squareup.wire:wire-runtime:1.8.0")
     }
 
     dependenciesTest {
-        //        compile("org.testng:testng:6.9.5")
         compile("junit:junit:4.12")
     }
 
