@@ -14,21 +14,9 @@ interface Bismarck<T : Any> {
     }
 
     /**
-     * All Bismarcks must be members of a brain "center".
-     * This allows dependencies to be set up,
-     * and also allows anonymous lookup by key.
-     */
-    val center: BismarckCenter?
-
-    /**
      * Acquire an rx [Observable] for this data stream.
      */
     fun observe(): Observable<T>
-
-    /**
-     * This can only be called once. Further calls will throw an exception.
-     */
-    fun bindToCenter(center: BismarckCenter)
 
     /**
      * Usually used to notify UI and external observers. Can also inject logging.
@@ -43,5 +31,5 @@ interface Bismarck<T : Any> {
      * Dependency chaining. Does not detect circular references, so be careful.
      * This, by default, will inject network fetches when an upstream invalidation is called.
      */
-    fun dependsOn(key: String): Bismarck<T>
+    fun dependsOn(other: Bismarck<*>): Bismarck<T>
 }

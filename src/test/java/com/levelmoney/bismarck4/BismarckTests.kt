@@ -16,11 +16,12 @@ class BismarckTests {
 
     @Before
     fun setup() {
-//        val b = testBismarck("foo") { "BAR!" }
-//                .dependsOn("baz")
-//                .listen { System.out.println("Oh hai $it") }.observe().subscribe {
-//            System.out.println("Oh hai $it")
-//        }
+        val b = testBismarck("foo") { "BAR!" }
+                .listen { System.out.println("Oh hai $it") }
+                .observe()
+                .subscribe {
+                    System.out.println("Oh hai $it")
+                }
     }
 
     @Test
