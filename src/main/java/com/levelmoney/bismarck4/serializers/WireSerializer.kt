@@ -1,6 +1,5 @@
 package com.levelmoney.bismarck4.serializers
 
-import com.levelmoney.bismarck.plugins.Serializer
 import com.levelmoney.bismarck4.Serializer
 import com.squareup.wire.Message
 import com.squareup.wire.Wire
