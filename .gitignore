@@ -6,3 +6,4 @@ javaBuild
 out
 gen
 .DS_Store
+output
