@@ -11,12 +11,16 @@ public class SimpleRateLimiter(val interval: Long) : RateLimiter {
     public var lastRun: Long = 0
         private set
 
+    override var lastReset: Long = 0
+        private set
+
     override fun update() {
         lastRun = getCurrent()
     }
 
     override fun reset() {
         lastRun = 0
+        lastReset = getCurrent()
     }
 
     override fun isFresh(): Boolean {

@@ -5,7 +5,10 @@ package com.levelmoney.bismarck4
  * Copyright(c) 2014 Level, Inc.
  */
 public interface RateLimiter {
-    public fun update()
-    public fun reset()
-    public fun isFresh(): Boolean
+
+    val lastReset: Long
+
+    fun update()
+    fun reset()
+    fun isFresh(): Boolean
 }
