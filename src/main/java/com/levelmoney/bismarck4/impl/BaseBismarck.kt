@@ -18,9 +18,6 @@ import java.util.concurrent.ThreadPoolExecutor
  * Copyright(c) 2015 Level, Inc.
  */
 open class BaseBismarck<T : Any>() : Bismarck<T> {
-    companion object {
-        private val DEFAULT_EXECUTOR = Executors.newCachedThreadPool()
-    }
 
     private val listeners: MutableList<Listener<T>> = arrayListOf()
     private val dependents: MutableList<Bismarck<*>> = arrayListOf()
@@ -31,7 +28,7 @@ open class BaseBismarck<T : Any>() : Bismarck<T> {
         private set
     protected var rateLimiter: RateLimiter? = SimpleRateLimiter(15 * 60 * 1000L)
         private set
-    protected var executor: Executor = DEFAULT_EXECUTOR
+    protected var executor: Executor = Bismarck.DEFAULT_EXECUTOR
         private set
 
     /**

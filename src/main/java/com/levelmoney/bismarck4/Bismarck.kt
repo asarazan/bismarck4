@@ -1,6 +1,7 @@
 package com.levelmoney.bismarck4
 
 import rx.Observable
+import java.util.concurrent.Executors
 
 /**
  * Created by Aaron Sarazan on 12/25/15.
@@ -11,6 +12,7 @@ interface Bismarck<T : Any> {
     companion object {
         val POSITION_BEGIN = 1
         val POSITION_END = 2
+        val DEFAULT_EXECUTOR = Executors.newCachedThreadPool()
     }
 
     /**
