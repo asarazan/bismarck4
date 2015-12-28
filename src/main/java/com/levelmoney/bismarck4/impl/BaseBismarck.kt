@@ -1,8 +1,6 @@
 package com.levelmoney.bismarck4.impl
 
-import com.levelmoney.bismarck4.Bismarck
-import com.levelmoney.bismarck4.Listener
-import com.levelmoney.bismarck4.Persister
+import com.levelmoney.bismarck4.*
 import rx.Observable
 import rx.Subscriber
 import rx.Subscription
@@ -13,25 +11,52 @@ import rx.subscriptions.Subscriptions
  * Created by Aaron Sarazan on 12/27/15.
  * Copyright(c) 2015 Level, Inc.
  */
-abstract class BaseBismarck<T : Any>(val key: String, val persister: Persister<T>) : Bismarck<T> {
+class BaseBismarck<T : Any>() : Bismarck<T> {
 
     private val listeners: MutableList<Listener<T>> = arrayListOf()
     private val dependents: MutableList<Bismarck<*>> = arrayListOf()
 
-    abstract fun onFetch(): T
+    private var fetcher: Fetcher<T>? = null
+    fun fetcher(fetcher: Fetcher<T>?) = apply { this.fetcher = fetcher }
 
-    // probably synchronize
-    fun fetch(): T {
-        return onFetch().apply {
-            persister.put(this)
-            listeners.forEach {
-                it.onUpdate(this)
+    private var persister: Persister<T>? = null
+    fun persister(persister: Persister<T>?) = apply { this.persister = persister }
+
+    private var rateLimiter: RateLimiter? = null
+    fun rateLimiter(rateLimiter: RateLimiter?) = apply { this.rateLimiter = rateLimiter }
+
+    override fun blockingFetch() {
+        fetcher?.onFetch()?.apply { insert(this) }
+    }
+
+    override fun observe(): Observable<T> {
+        return Observable.create(BismarckOnSubscribe()).apply {
+            if (!isFresh()) {
+                BismarckFetching.add(this@BaseBismarck)
             }
         }
     }
 
-    override fun observe(): Observable<T> {
-        return Observable.create(BismarckOnSubscribe())
+    override fun insert(data: T?) {
+        val old = cached()
+        persister?.put(data)
+        rateLimiter?.update()
+        listeners.forEach {
+            it.onUpdate(data)
+        }
+        if (old != data) {
+            dependents.forEach { it.invalidate() }
+        }
+    }
+
+    override fun isFresh(): Boolean {
+        return rateLimiter?.isFresh() ?: false
+    }
+
+    override fun invalidate() {
+        rateLimiter?.reset()
+        BismarckFetching.add(this)
+        dependents.forEach { it.invalidate() }
     }
 
     override fun listen(listener: Listener<T>, position: Int) = apply {
@@ -51,8 +76,8 @@ abstract class BaseBismarck<T : Any>(val key: String, val persister: Persister<T
         dependents.add(other)
     }
 
-    private fun cached(): T? {
-        return persister.get()
+    internal fun cached(): T? {
+        return persister?.get()
     }
 
     private inner class BismarckOnSubscribe : Observable.OnSubscribe<T> {

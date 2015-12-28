@@ -25,8 +25,10 @@ val p = kotlinProject {
 
     dependencies {
         compile("io.reactivex:rxjava:1.1.0")
-        provided("com.squareup.wire:wire-runtime:1.8.0")
-        provided("com.google.code.gson:gson:2.5")
+
+        // TODO xxx switch these back to provided
+        compile("com.squareup.wire:wire-runtime:1.8.0")
+        compile("com.google.code.gson:gson:2.5")
     }
 
     dependenciesTest {

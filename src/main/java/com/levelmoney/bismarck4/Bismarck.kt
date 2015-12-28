@@ -21,7 +21,23 @@ interface Bismarck<T : Any> {
     /**
      * Manually set the data of the bismarck.
      */
-    fun insert(value: T?)
+    fun insert(data: T?)
+
+    /**
+     * Make a synchronous fetch call. Should not be done on main thread.
+     */
+    fun blockingFetch()
+
+    /**
+     * The bismarck will usually employ some sort of timer or hash comparison to determine this.
+     * Can also call [invalidate] to force this to false.
+     */
+    fun isFresh(): Boolean
+
+    /**
+     * Should cause [isFresh] to return false. TODO: optionally refetch
+     */
+    fun invalidate()
 
     /**
      * Usually used to notify UI and external observers. Can also inject logging.
