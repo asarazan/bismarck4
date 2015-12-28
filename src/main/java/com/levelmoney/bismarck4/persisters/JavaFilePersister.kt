@@ -9,7 +9,7 @@ import java.io.FileOutputStream
  * Created by Aaron Sarazan on 9/7/15
  * Copyright(c) 2015 Level, Inc.
  */
-public abstract class JavaFilePersister<R: Any>(val root: String, val serializer: Serializer<R>) : CachingPersister<R>() {
+public abstract class JavaFilePersister<T: Any>(val root: String, val serializer: Serializer<T>) : CachingPersister<T>() {
 
     /**
      * We require this to be dynamically computed because the path is often dependent on userid,
@@ -17,7 +17,7 @@ public abstract class JavaFilePersister<R: Any>(val root: String, val serializer
      */
     abstract fun path(): String?
 
-    override fun get(): R? {
+    override fun get(): T? {
         val path = path() ?: return null
         val cached = super.get()
         if (cached != null) return cached
@@ -28,7 +28,7 @@ public abstract class JavaFilePersister<R: Any>(val root: String, val serializer
         return loaded
     }
 
-    override fun put(data: R?) {
+    override fun put(data: T?) {
         val path = path() ?: return
         super.put(data)
         val file = File(root, "/$path")

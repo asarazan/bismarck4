@@ -1,6 +1,8 @@
 package com.levelmoney.bismarck4.impl
 
 import com.levelmoney.bismarck4.*
+import com.levelmoney.bismarck4.persisters.CachingPersister
+import com.levelmoney.bismarck4.ratelimit.SimpleRateLimiter
 import rx.Observable
 import rx.Subscriber
 import rx.Subscription
@@ -19,10 +21,10 @@ class BaseBismarck<T : Any>() : Bismarck<T> {
     private var fetcher: Fetcher<T>? = null
     fun fetcher(fetcher: Fetcher<T>?) = apply { this.fetcher = fetcher }
 
-    private var persister: Persister<T>? = null
+    private var persister: Persister<T>? = CachingPersister()
     fun persister(persister: Persister<T>?) = apply { this.persister = persister }
 
-    private var rateLimiter: RateLimiter? = null
+    private var rateLimiter: RateLimiter? = SimpleRateLimiter(15 * 60 * 1000L)
     fun rateLimiter(rateLimiter: RateLimiter?) = apply { this.rateLimiter = rateLimiter }
 
     override fun blockingFetch() {
