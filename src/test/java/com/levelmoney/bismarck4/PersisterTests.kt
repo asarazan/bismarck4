@@ -40,12 +40,4 @@ class PersisterTests {
         persister.cached = null
         assertNull(persister.get())
     }
-
-    @Test
-    fun testBismarckPersistence() {
-        val b = BaseBismarck<String>().persister(CachingPersister())
-        assertNull(b.cached())
-        b.insert("Test")
-        assertEquals("Test", b.cached())
-    }
 }

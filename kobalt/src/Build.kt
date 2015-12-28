@@ -33,6 +33,7 @@ val p = kotlinProject {
 
     dependenciesTest {
         compile("junit:junit:4.12")
+        compile("org.jetbrains.kotlin:kotlin-test:1.0.0-beta-4584")
     }
 
     assemble {

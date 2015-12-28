@@ -68,7 +68,7 @@ open class BaseBismarck<T : Any>() : Bismarck<T> {
         fetcher?.onFetch()?.apply { insert(this) }
     }
 
-    private fun asyncFetch() {
+    protected open fun asyncFetch() {
         executor.execute { blockingFetch() }
     }
 
@@ -98,8 +98,12 @@ open class BaseBismarck<T : Any>() : Bismarck<T> {
 
     override fun invalidate() {
         rateLimiter?.reset()
-        asyncFetch()
         dependents.forEach { it.invalidate() }
+    }
+
+    override fun refresh() {
+        if (!isFresh()) { asyncFetch() }
+        dependents.forEach { it.refresh() }
     }
 
     override fun listen(listener: Listener<T>, position: Int) = apply {

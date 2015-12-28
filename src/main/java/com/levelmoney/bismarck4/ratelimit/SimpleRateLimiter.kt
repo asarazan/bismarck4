@@ -8,9 +8,15 @@ import com.levelmoney.bismarck4.RateLimiter
  */
 public class SimpleRateLimiter(val interval: Long) : RateLimiter {
 
+    /**
+     * Uses [System.nanoTime]
+     */
     public var lastRun: Long = 0
         private set
 
+    /**
+     * Uses [System.nanoTime]
+     */
     override var lastReset: Long = 0
         private set
 
@@ -28,7 +34,7 @@ public class SimpleRateLimiter(val interval: Long) : RateLimiter {
     }
 
     private fun getCurrent(): Long {
-        return System.currentTimeMillis()
+        return System.nanoTime()
     }
 
     private fun pass(current: Long): Boolean {

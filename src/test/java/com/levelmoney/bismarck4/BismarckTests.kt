@@ -1,8 +1,10 @@
 package com.levelmoney.bismarck4
 
-import com.levelmoney.bismarck4.Bismarck
-import org.junit.Before
+import com.levelmoney.bismarck4.impl.BaseBismarck
+import com.levelmoney.bismarck4.persisters.CachingPersister
 import org.junit.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 /**
  * Created by Aaron Sarazan on 12/25/15.
@@ -10,22 +12,13 @@ import org.junit.Test
  */
 class BismarckTests {
 
-    fun <T : Any> testBismarck(key: String, fn: () -> T): Bismarck<T> {
-        throw UnsupportedOperationException("TODO")
-    }
-
-    @Before
-    fun setup() {
-        val b = testBismarck("foo") { "BAR!" }
-                .listen { System.out.println("Oh hai $it") }
-                .observe()
-                .subscribe {
-                    System.out.println("Oh hai $it")
-                }
-    }
-
     @Test
-    fun test() {
-
+    fun testBismarckPersistence() {
+        val b = BaseBismarck<String>().persister(CachingPersister())
+        assertNull(b.cached())
+        b.insert("Test")
+        assertEquals("Test", b.cached())
+        b.insert(null)
+        assertNull(b.cached())
     }
 }

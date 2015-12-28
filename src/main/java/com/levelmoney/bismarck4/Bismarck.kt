@@ -35,9 +35,14 @@ interface Bismarck<T : Any> {
     fun isFresh(): Boolean
 
     /**
-     * Should cause [isFresh] to return false. TODO: optionally refetch
+     * Should cause [isFresh] to return false.
      */
     fun invalidate()
+
+    /**
+     * Trigger asyncFetch of this and all dependencies where [isFresh] is false.
+     */
+    fun refresh()
 
     /**
      * Usually used to notify UI and external observers. Can also inject logging.
