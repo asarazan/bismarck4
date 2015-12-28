@@ -1,13 +1,14 @@
 import com.beust.kobalt.*
-import com.beust.kobalt.plugin.packaging.assemble
 import com.beust.kobalt.plugin.kotlin.*
+import com.beust.kobalt.plugin.packaging.*
+import com.beust.kobalt.plugin.publish.*
 
 val repos = repos()
 
 val p = kotlinProject {
 
-    name = "bismarck4"
     group = "com.levelmoney"
+    name = "bismarck4"
     artifactId = name
     version = "0.1"
 
@@ -25,10 +26,8 @@ val p = kotlinProject {
 
     dependencies {
         compile("io.reactivex:rxjava:1.1.0")
-
-        // TODO xxx switch these back to provided
-        compile("com.squareup.wire:wire-runtime:1.8.0")
-        compile("com.google.code.gson:gson:2.5")
+        provided("com.squareup.wire:wire-runtime:1.8.0")
+        provided("com.google.code.gson:gson:2.5")
     }
 
     dependenciesTest {
@@ -37,7 +36,11 @@ val p = kotlinProject {
     }
 
     assemble {
-        jar {
+        mavenJars {
         }
+    }
+
+    jcenter {
+        publish = true
     }
 }
