@@ -124,19 +124,6 @@ open class BaseBismarck<T : Any>() : Bismarck<T> {
         dependents.forEach { it.refresh() }
     }
 
-    override fun listen(listener: Listener<T>, position: Int) = apply {
-        val index = when (position) {
-            Bismarck.POSITION_BEGIN -> 0
-            Bismarck.POSITION_END -> listeners.size
-            else -> throw IllegalArgumentException("Must specify POSITION_BEGIN or POSITION_END")
-        }
-        listeners.add(index, listener)
-    }
-
-    override fun unlisten(listener: Listener<T>) {
-        listeners.remove(listener)
-    }
-
     override fun addDependent(other: Bismarck<*>) = apply {
         dependents.add(other)
     }
@@ -170,9 +157,7 @@ open class BaseBismarck<T : Any>() : Bismarck<T> {
                 }
             }
             stateListeners.add(listener)
-            sub.add(Subscriptions.create {
-                stateListeners.remove(listener)
-            })
+            sub.add(Subscriptions.create { stateListeners.remove(listener) })
             sub.onStart()
             sub.onNext(getState())
         }
@@ -186,8 +171,8 @@ open class BaseBismarck<T : Any>() : Bismarck<T> {
                     sub.onNext(data ?: return)
                 }
             }
-            listen(listener)
-            sub.add(Subscriptions.create { unlisten(listener) })
+            listeners.add(listener)
+            sub.add(Subscriptions.create { listeners.remove(listener) })
             sub.onStart()
             cached()?.let { sub.onNext(it) }
         }
