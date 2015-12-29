@@ -1,12 +1,13 @@
 package com.levelmoney.bismarck4.ratelimit
 
 import com.levelmoney.bismarck4.RateLimiter
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by Aaron Sarazan on 9/10/13
  * Copyright(c) 2013 Level, Inc.
  */
-public class SimpleRateLimiter(val interval: Long) : RateLimiter {
+public class SimpleRateLimiter(val ms: Long) : RateLimiter {
 
     /**
      * Uses [System.nanoTime]
@@ -39,6 +40,7 @@ public class SimpleRateLimiter(val interval: Long) : RateLimiter {
 
     private fun pass(current: Long): Boolean {
         val last = lastRun
-        return last == 0L || current - last >= interval
+        val ns = TimeUnit.MILLISECONDS.toNanos(ms)
+        return last == 0L || current - last >= ns
     }
 }

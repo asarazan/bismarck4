@@ -8,6 +8,8 @@ import com.levelmoney.bismarck4.impl.BaseBismarck
  * Copyright(c) 2015 Level, Inc.
  */
 
+fun sleepAsyncFetch(ms: Long = 5L) = Thread.sleep(ms)
+
 fun BaseBismarck<*>._asyncFetch() {
     val method = BaseBismarck::class.java.getDeclaredMethod("asyncFetch")
     method.isAccessible = true

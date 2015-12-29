@@ -5,5 +5,9 @@ package com.levelmoney.bismarck4
  * Copyright(c) 2015 Level, Inc.
  */
 public interface Fetcher<T: Any> {
+
+    @Throws(BismarckFetchError::class)
     public fun onFetch(): T?
+
+    class BismarckFetchError(message: String, cause: Throwable? = null) : Throwable(message, cause)
 }

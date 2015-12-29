@@ -10,8 +10,8 @@ import java.util.concurrent.Executors
 interface Bismarck<T : Any> {
 
     companion object {
-        val POSITION_BEGIN = 1
-        val POSITION_END = 2
+        val POSITION_BEGIN = -1
+        val POSITION_END = -2
         val DEFAULT_EXECUTOR = Executors.newCachedThreadPool()
     }
 
@@ -19,6 +19,11 @@ interface Bismarck<T : Any> {
      * Acquire an rx [Observable] for this data stream.
      */
     fun observe(): Observable<T>
+
+    /**
+     * Keep tabs on in-flight fetches.
+     */
+    fun observeState(): Observable<BismarckState>
 
     /**
      * Manually set the data of the bismarck.

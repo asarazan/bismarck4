@@ -18,7 +18,7 @@ class DependencyTests {
         val b2 = Bismarcks.baseBismarck<Int>().fetcher { ++count2 }
         b1.addDependent(b2)
         b1.refresh()
-        Thread.sleep(1L)
+        sleepAsyncFetch()
         assertEquals(1, count1)
         assertEquals(1, count2)
     }

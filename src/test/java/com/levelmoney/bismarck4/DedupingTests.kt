@@ -2,6 +2,7 @@ package com.levelmoney.bismarck4
 
 import com.levelmoney.bismarck4.impl.DedupingBismarck
 import org.junit.Test
+import rx.Subscription
 import kotlin.test.assertEquals
 
 /**
@@ -16,11 +17,11 @@ class DedupingTests {
         val b = DedupingBismarck<Int>().fetcher { count++ }
         b._asyncFetch()
         b._asyncFetch() // should be dropped
-        Thread.sleep(1L)
+        sleepAsyncFetch()
         assertEquals(1, count)
         b.invalidate()
         b._asyncFetch()
-        Thread.sleep(1L)
+        sleepAsyncFetch()
         assertEquals(2, count)
     }
 
@@ -28,10 +29,16 @@ class DedupingTests {
     fun testInvalidateDedupe() {
         var count = 0
         val b = DedupingBismarck<Int>().fetcher { count++ }
+        var sub: Subscription? = null
+        sub = b.observeState().subscribe {
+            if (it == BismarckState.Fetching) {
+                sub!!.unsubscribe()
+                b._asyncFetch()
+                b.invalidate()
+            }
+        }
         b._asyncFetch()
-        b._asyncFetch()
-        b.invalidate()
-        Thread.sleep(1L)
+        sleepAsyncFetch()
         assertEquals(2, count)
     }
 }
