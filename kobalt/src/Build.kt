@@ -27,7 +27,6 @@ val p = kotlinProject {
     dependencies {
         compile("io.reactivex:rxjava:1.1.0")
 
-        // I want to switch these to provided but it doesn't seem to be supported
         provided("com.squareup.wire:wire-runtime:1.8.0")
         provided("com.google.code.gson:gson:2.5")
     }
