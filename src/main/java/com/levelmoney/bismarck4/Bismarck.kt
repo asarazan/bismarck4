@@ -56,6 +56,16 @@ interface Bismarck<T : Any> {
     fun refresh()
 
     /**
+     * FIFO executed just after data insertion and before dependent invalidation
+     */
+    fun addListener(listener: Listener<T>)
+
+    /**
+     * Remove a previously added listener
+     */
+    fun removeListener(listener: Listener<T>)
+
+    /**
      * Dependency chaining. Does not detect circular references, so be careful.
      */
     fun addDependent(other: Bismarck<*>): Bismarck<T>

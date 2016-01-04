@@ -20,8 +20,9 @@ import java.util.concurrent.atomic.AtomicInteger
 open class BaseBismarck<T : Any>() : Bismarck<T> {
 
     // Because the [synchronized] calls were breaking and I'm lazy
-    private val stateListeners          = CopyOnWriteArrayList<StateListener>()
     private val listeners               = CopyOnWriteArrayList<Listener<T>>()
+    private val subscribers             = CopyOnWriteArrayList<Subscriber<in T>>()
+    private val stateSubscribers        = CopyOnWriteArrayList<Subscriber<in BismarckState>>()
     private val dependents              = arrayListOf<Bismarck<*>>()
 
     private var fetchCount              = AtomicInteger(0)
@@ -105,6 +106,9 @@ open class BaseBismarck<T : Any>() : Bismarck<T> {
         listeners.forEach {
             it.onUpdate(data)
         }
+        subscribers.forEach {
+            it.onNext(data)
+        }
         if (old != data) {
             dependents.forEach { it.invalidate() }
         }
@@ -124,14 +128,22 @@ open class BaseBismarck<T : Any>() : Bismarck<T> {
         dependents.forEach { it.refresh() }
     }
 
+    override fun addListener(listener: Listener<T>) {
+        listeners.add(listener)
+    }
+
+    override fun removeListener(listener: Listener<T>) {
+        listeners.remove(listener)
+    }
+
     override fun addDependent(other: Bismarck<*>) = apply {
         dependents.add(other)
     }
 
     private fun updateState() {
         val state = getState()
-        stateListeners.forEach {
-            it.onStateChanged(state)
+        stateSubscribers.forEach {
+            it.onNext(state)
         }
     }
 
@@ -151,13 +163,8 @@ open class BaseBismarck<T : Any>() : Bismarck<T> {
     private inner class StateOnSubscribe : Observable.OnSubscribe<BismarckState> {
         override fun call(sub: Subscriber<in BismarckState>) {
             if (sub.isUnsubscribed) return
-            val listener = object : StateListener {
-                override fun onStateChanged(state: BismarckState) {
-                    sub.onNext(state)
-                }
-            }
-            stateListeners.add(listener)
-            sub.add(Subscriptions.create { stateListeners.remove(listener) })
+            stateSubscribers.add(sub)
+            sub.add(Subscriptions.create { stateSubscribers.remove(sub) })
             sub.onStart()
             sub.onNext(getState())
         }
@@ -166,19 +173,10 @@ open class BaseBismarck<T : Any>() : Bismarck<T> {
     private inner class BismarckOnSubscribe : Observable.OnSubscribe<T> {
         override fun call(sub: Subscriber<in T>) {
             if (sub.isUnsubscribed) return
-            val listener = object : Listener<T> {
-                override fun onUpdate(data: T?) {
-                    sub.onNext(data ?: return)
-                }
-            }
-            listeners.add(listener)
-            sub.add(Subscriptions.create { listeners.remove(listener) })
+            subscribers.add(sub)
+            sub.add(Subscriptions.create { subscribers.remove(sub) })
             sub.onStart()
             peek()?.let { sub.onNext(it) }
         }
-    }
-
-    private interface Listener<T: Any> {
-        public fun onUpdate(data: T?)
     }
 }
