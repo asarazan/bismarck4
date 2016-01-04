@@ -15,10 +15,10 @@ class BismarckTests {
     @Test
     fun testBismarckPersistence() {
         val b = BaseBismarck<String>().persister(CachingPersister())
-        assertNull(b.cached())
+        assertNull(b.peek())
         b.insert("Test")
-        assertEquals("Test", b.cached())
+        assertEquals("Test", b.peek())
         b.insert(null)
-        assertNull(b.cached())
+        assertNull(b.peek())
     }
 }

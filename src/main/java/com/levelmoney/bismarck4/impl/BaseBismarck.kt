@@ -99,7 +99,7 @@ open class BaseBismarck<T : Any>() : Bismarck<T> {
     }
 
     override fun insert(data: T?) {
-        val old = cached()
+        val old = peek()
         persister?.put(data)
         rateLimiter?.update()
         listeners.forEach {
@@ -144,7 +144,7 @@ open class BaseBismarck<T : Any>() : Bismarck<T> {
         }
     }
 
-    internal fun cached(): T? {
+    override fun peek(): T? {
         return persister?.get()
     }
 
@@ -174,7 +174,11 @@ open class BaseBismarck<T : Any>() : Bismarck<T> {
             listeners.add(listener)
             sub.add(Subscriptions.create { listeners.remove(listener) })
             sub.onStart()
-            cached()?.let { sub.onNext(it) }
+            peek()?.let { sub.onNext(it) }
         }
+    }
+
+    private interface Listener<T: Any> {
+        public fun onUpdate(data: T?)
     }
 }

@@ -34,6 +34,12 @@ interface Bismarck<T : Any> {
     fun blockingFetch()
 
     /**
+     * Synchronously grab the latest cached version of the data.
+     * It's a bit of a smell if you have to use this. You should use [observe] instead.
+     */
+    fun peek(): T?
+
+    /**
      * The bismarck will usually employ some sort of timer or hash comparison to determine this.
      * Can also call [invalidate] to force this to false.
      */
