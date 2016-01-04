@@ -20,12 +20,12 @@ import java.util.concurrent.atomic.AtomicInteger
 open class BaseBismarck<T : Any>() : Bismarck<T> {
 
     // Because the [synchronized] calls were breaking and I'm lazy
-    private val stateListeners  = CopyOnWriteArrayList<StateListener>()
-    private val listeners       = CopyOnWriteArrayList<Listener<T>>()
-    private val dependents      = arrayListOf<Bismarck<*>>()
+    private val stateListeners          = CopyOnWriteArrayList<StateListener>()
+    private val listeners               = CopyOnWriteArrayList<Listener<T>>()
+    private val dependents              = arrayListOf<Bismarck<*>>()
 
-    private var fetchCount      = AtomicInteger(0)
-    private var hasError        = false
+    private var fetchCount              = AtomicInteger(0)
+    private var lastError: Throwable?   = null
 
     protected var fetcher: Fetcher<T>? = null
         private set
@@ -71,11 +71,11 @@ open class BaseBismarck<T : Any>() : Bismarck<T> {
         updateState()
         try {
             fetcher?.onFetch()?.apply {
-                hasError = false
+                lastError = null
                 insert(this)
             }
         } catch (e: Fetcher.BismarckFetchError) {
-            hasError = true
+            lastError = e
         } finally {
             fetchCount.decrementAndGet()
             updateState()
@@ -138,7 +138,7 @@ open class BaseBismarck<T : Any>() : Bismarck<T> {
     internal fun getState(): BismarckState {
         return when {
             fetchCount.get() > 0    -> BismarckState.Fetching
-            hasError                -> BismarckState.Error
+            lastError != null       -> BismarckState.Error
             isFresh()               -> BismarckState.Fresh
             else                    -> BismarckState.Stale
         }
