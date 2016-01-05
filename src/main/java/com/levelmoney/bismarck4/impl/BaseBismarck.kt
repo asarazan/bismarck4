@@ -128,11 +128,11 @@ open class BaseBismarck<T : Any>() : Bismarck<T> {
         dependents.forEach { it.refresh() }
     }
 
-    override fun addListener(listener: Listener<T>) {
+    override fun listen(listener: Listener<T>) = apply {
         listeners.add(listener)
     }
 
-    override fun removeListener(listener: Listener<T>) {
+    override fun unlisten(listener: Listener<T>) = apply {
         listeners.remove(listener)
     }
 

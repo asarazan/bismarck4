@@ -16,3 +16,12 @@ fun <T : Any, B : BaseBismarck<T>> B.fetcher(fn: () -> T?): B {
         }
     }) as B
 }
+
+@Suppress("UNCHECKED_CAST")
+fun <T : Any, B : Bismarck<T>> B.listen(fn: (T?) -> Unit): B {
+    return listen(object : Listener<T> {
+        override fun onUpdate(data: T?) {
+            fn(data)
+        }
+    }) as B
+}

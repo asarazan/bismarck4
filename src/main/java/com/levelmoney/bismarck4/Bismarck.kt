@@ -58,12 +58,12 @@ interface Bismarck<T : Any> {
     /**
      * FIFO executed just after data insertion and before dependent invalidation
      */
-    fun addListener(listener: Listener<T>)
+    fun listen(listener: Listener<T>): Bismarck<T>
 
     /**
      * Remove a previously added listener
      */
-    fun removeListener(listener: Listener<T>)
+    fun unlisten(listener: Listener<T>): Bismarck<T>
 
     /**
      * Dependency chaining. Does not detect circular references, so be careful.

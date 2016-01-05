@@ -10,7 +10,7 @@ val p = kotlinProject {
     group = "com.levelmoney"
     name = "bismarck4"
     artifactId = name
-    version = "0.2.02"
+    version = "0.2.05"
 
     sourceDirectories {
         path("src/main/java")
