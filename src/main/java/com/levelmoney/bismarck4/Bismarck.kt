@@ -40,6 +40,11 @@ interface Bismarck<T : Any> {
     fun peek(): T?
 
     /**
+     * Hopefully I can get rid of this eventually, too.
+     */
+    fun peekState(): BismarckState
+
+    /**
      * The bismarck will usually employ some sort of timer or hash comparison to determine this.
      * Can also call [invalidate] to force this to false.
      */

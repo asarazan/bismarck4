@@ -141,13 +141,13 @@ open class BaseBismarck<T : Any>() : Bismarck<T> {
     }
 
     private fun updateState() {
-        val state = getState()
+        val state = peekState()
         stateSubscribers.forEachCompat {
             it.onNext(state)
         }
     }
 
-    internal fun getState(): BismarckState {
+    override fun peekState(): BismarckState {
         return when {
             fetchCount.get() > 0    -> BismarckState.Fetching
             lastError != null       -> BismarckState.Error
@@ -166,7 +166,7 @@ open class BaseBismarck<T : Any>() : Bismarck<T> {
             stateSubscribers.add(sub)
             sub.add(Subscriptions.create { stateSubscribers.remove(sub) })
             sub.onStart()
-            sub.onNext(getState())
+            sub.onNext(peekState())
         }
     }
 
