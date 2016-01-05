@@ -3,6 +3,7 @@ import com.beust.kobalt.plugin.kotlin.*
 import com.beust.kobalt.plugin.packaging.*
 import com.beust.kobalt.plugin.publish.*
 
+val kotlinVersion = "1.0.0-beta-4584"
 val repos = repos()
 
 val p = kotlinProject {
@@ -10,7 +11,7 @@ val p = kotlinProject {
     group = "com.levelmoney"
     name = "bismarck4"
     artifactId = name
-    version = "0.2.05"
+    version = "0.2.07"
 
     sourceDirectories {
         path("src/main/java")
@@ -26,6 +27,7 @@ val p = kotlinProject {
 
     dependencies {
         compile("io.reactivex:rxjava:1.1.0")
+        compile("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
 
         provided("com.squareup.wire:wire-runtime:1.8.0")
         provided("com.google.code.gson:gson:2.5")
@@ -33,7 +35,7 @@ val p = kotlinProject {
 
     dependenciesTest {
         compile("junit:junit:4.12")
-        compile("org.jetbrains.kotlin:kotlin-test:1.0.0-beta-4584")
+        compile("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
     }
 
     assemble {
