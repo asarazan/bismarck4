@@ -25,3 +25,13 @@ fun <T : Any, B : Bismarck<T>> B.listen(fn: (T?) -> Unit): B {
         }
     }) as B
 }
+
+/**
+ * Performs the given [action] on each element.
+ *
+ * We're still getting crashes related to https://youtrack.jetbrains.com/issue/KT-10479
+ * on Android clients, so this should work around it for the time being.
+ */
+public inline fun <T> Iterable<T>.forEachCompat(action: (T) -> Unit): Unit {
+    for (element in this) action(element)
+}

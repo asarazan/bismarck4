@@ -23,7 +23,7 @@ open class BaseBismarck<T : Any>() : Bismarck<T> {
     private val listeners               = CopyOnWriteArrayList<Listener<T>>()
     private val subscribers             = CopyOnWriteArrayList<Subscriber<in T>>()
     private val stateSubscribers        = CopyOnWriteArrayList<Subscriber<in BismarckState>>()
-    private val dependents              = arrayListOf<Bismarck<*>>()
+    private val dependents              = CopyOnWriteArrayList<Bismarck<*>>()
 
     private var fetchCount              = AtomicInteger(0)
     private var lastError: Throwable?   = null
@@ -103,14 +103,14 @@ open class BaseBismarck<T : Any>() : Bismarck<T> {
         val old = peek()
         persister?.put(data)
         rateLimiter?.update()
-        listeners.forEach {
+        listeners.forEachCompat {
             it.onUpdate(data)
         }
-        subscribers.forEach {
+        subscribers.forEachCompat {
             it.onNext(data)
         }
         if (old != data) {
-            dependents.forEach { it.invalidate() }
+            dependents.forEachCompat { it.invalidate() }
         }
     }
 
@@ -120,12 +120,12 @@ open class BaseBismarck<T : Any>() : Bismarck<T> {
 
     override fun invalidate() {
         rateLimiter?.reset()
-        dependents.forEach { it.invalidate() }
+        dependents.forEachCompat { it.invalidate() }
     }
 
     override fun refresh() {
         if (!isFresh()) { asyncFetch() }
-        dependents.forEach { it.refresh() }
+        dependents.forEachCompat { it.refresh() }
     }
 
     override fun listen(listener: Listener<T>) = apply {
@@ -142,7 +142,7 @@ open class BaseBismarck<T : Any>() : Bismarck<T> {
 
     private fun updateState() {
         val state = getState()
-        stateSubscribers.forEach {
+        stateSubscribers.forEachCompat {
             it.onNext(state)
         }
     }
