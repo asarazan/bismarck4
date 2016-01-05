@@ -74,4 +74,10 @@ interface Bismarck<T : Any> {
      * Dependency chaining. Does not detect circular references, so be careful.
      */
     fun addDependent(other: Bismarck<*>): Bismarck<T>
+
+    /**
+     * Type-agnostic method for clearing data,
+     * since logouts will often cause this to happen in a foreach loop.
+     */
+    fun clear() = insert(null)
 }
