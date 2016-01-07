@@ -9,9 +9,9 @@ val repos = repos()
 val p = kotlinProject {
 
     group = "com.levelmoney"
-    name = "bismarck4"
+    name = "bismarck"
     artifactId = name
-    version = "0.2.12"
+    version = "0.1"
 
     sourceDirectories {
         path("src/main/java")
